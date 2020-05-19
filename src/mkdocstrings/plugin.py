@@ -26,23 +26,24 @@ import logging
 import random
 import re
 import string
-from typing import Any, Callable, Dict, List, Match, Pattern, Tuple
+from typing import Any, Callable, Dict, List, Match, Optional, Pattern, Tuple
 
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from livereload import Server
 from mkdocs.config import Config
 from mkdocs.config.config_options import Type as MkType
+from mkdocs.exceptions import ConfigurationError
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.files import Files
 from mkdocs.structure.pages import Page
 from mkdocs.structure.toc import AnchorLink
 from mkdocs.utils import warning_filter
 
-from .extension import MkdocstringsExtension
-from .handlers import teardown
+from mkdocstrings.extension import MkdocstringsExtension
+from mkdocstrings.handlers import teardown
 
-log = logging.getLogger(__name__)
+log = logging.getLogger(f"mkdocs.plugins.{__name__}")
 log.addFilter(warning_filter)
 
 SELECTION_OPTS_KEY: str = "selection"
@@ -98,7 +99,12 @@ class MkdocstringsPlugin(BasePlugin):
               selection:
                 selection_opt: true
               rendering:
-                 rendering_opt: "value"
+                rendering_opt: "value"
+              setup_commands:
+                - "import os"
+                - "import django"
+                - "os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_djang_app.settings')"
+                - "django.setup()"
             rust:
               selection:
                 selection_opt: 2
@@ -106,23 +112,23 @@ class MkdocstringsPlugin(BasePlugin):
     """
 
     def __init__(self) -> None:
+        """Initialization method."""
         super(MkdocstringsPlugin, self).__init__()
-        self.mkdocstrings_extension = None
+        self.mkdocstrings_extension: Optional[MkdocstringsExtension] = None
         self.url_map: Dict[Any, str] = {}
 
-    def on_serve(self, server: Server, config: Config, **kwargs) -> Server:
+    def on_serve(self, server: Server, config: Config, builder: Callable = None, **kwargs) -> Server:
         """
         Hook for the [`on_serve` event](https://www.mkdocs.org/user-guide/plugins/#on_serve).
 
         In this hook, we add the directories specified in the plugin's configuration to the list of directories
         watched by `mkdocs`. Whenever a change occurs in one of these directories, the documentation is built again
         and the site reloaded.
-
-        Note:
-            The implementation is a hack. We are retrieving the watch function from a protected attribute.
-            See issue [mkdocs/mkdocs#1952](https://github.com/mkdocs/mkdocs/issues/1952) for more information.
         """
-        builder = list(server.watcher._tasks.values())[0]["func"]
+        if builder is None:
+            # The builder parameter was added in mkdocs v1.1.1.
+            # See issue https://github.com/mkdocs/mkdocs/issues/1952.
+            builder = list(server.watcher._tasks.values())[0]["func"]
         for element in self.config["watch"]:
             log.debug(f"mkdocstrings.plugin: Adding directory '{element}' to watcher")
             server.watch(element, builder)
@@ -139,16 +145,18 @@ class MkdocstringsPlugin(BasePlugin):
         later when processing markdown to get handlers and their global configurations).
         """
         if not config["site_url"]:
-            log.error("mkdocstrings.plugin: configuration item 'site_url' is required for cross-references")
+            raise ConfigurationError(
+                "mkdocstrings.plugin: configuration item 'site_url' is required for cross-references"
+            )
 
         log.debug("mkdocstrings.plugin: Adding extension to the list")
 
-        extension_config = dict(
-            theme_name=config["theme"].name,
-            mdx=config["markdown_extensions"],
-            mdx_configs=config["mdx_configs"],
-            mkdocstrings=self.config,
-        )
+        extension_config = {
+            "theme_name": config["theme"].name,
+            "mdx": config["markdown_extensions"],
+            "mdx_configs": config["mdx_configs"],
+            "mkdocstrings": self.config,
+        }
 
         self.mkdocstrings_extension = MkdocstringsExtension(config=extension_config)
         config["markdown_extensions"].append(self.mkdocstrings_extension)
@@ -163,15 +171,9 @@ class MkdocstringsPlugin(BasePlugin):
         `[identifier][]`.
         """
         log.debug(f"mkdocstrings.plugin: Mapping identifiers to URLs for page {page.file.src_path}")
-        try:
-            for item in page.toc.items:
-                self.map_urls(page.canonical_url, item)
-            return html
-        except TypeError:
-            # page.canonical_url is None, fail silently.
-            # An error already has been logged in the on_config hook,
-            # and warnings will be logged later, in the on_post_page hook.
-            pass
+        for item in page.toc.items:
+            self.map_urls(page.canonical_url, item)
+        return html
 
     def map_urls(self, base_url: str, anchor: AnchorLink) -> None:
         """
@@ -308,6 +310,7 @@ class Placeholder:
     """
 
     def __init__(self) -> None:
+        """Initialization method."""
         self.ids: Dict[str, str] = {}
         self.seed = ""
         self.set_seed()
@@ -330,13 +333,13 @@ class Placeholder:
 
     def get_id(self) -> str:
         """Return a random, unique string."""
-        return f"{self.seed}{random.randint(0, 1000000)}"  # nosec: it's not for security/cryptographic purposes
+        return f"{self.seed}{random.randint(0, 1000000)}"  # noqa: S311 (it's not for security/cryptographic purposes)
 
     def set_seed(self) -> None:
         """Reset the seed in `self.seed` with a random string."""
         self.seed = "".join(random.choices(string.ascii_letters + string.digits, k=16))
 
-    def replace_code_tags(self, soup: str) -> None:
+    def replace_code_tags(self, soup: BeautifulSoup) -> None:
         """
         Recursively replace code nodes with navigable strings whose values are unique IDs.
 

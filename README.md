@@ -1,7 +1,7 @@
 # mkdocstrings
-[![pipeline status](https://gitlab.com/pawamoy/mkdocstrings/badges/master/pipeline.svg)](https://gitlab.com/pawamoy/mkdocstrings/pipelines)
-[![coverage report](https://gitlab.com/pawamoy/mkdocstrings/badges/master/coverage.svg)](https://gitlab.com/pawamoy/mkdocstrings/commits/master)
-[![documentation](https://img.shields.io/badge/docs-latest-green.svg?style=flat)](https://pawamoy.github.io/mkdocstrings)
+
+![ci](https://github.com/pawamoy/mkdocstrings/workflows/ci/badge.svg)
+[![documentation](https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat)](https://pawamoy.github.io/mkdocstrings/)
 [![pypi version](https://img.shields.io/pypi/v/mkdocstrings.svg)](https://pypi.org/project/mkdocstrings/)
 
 Automatic documentation from sources, for MkDocs.
@@ -40,13 +40,13 @@ Automatic documentation from sources, for MkDocs.
 - **Watch source code directories:** you can tell `mkdocstrings` to add directories to be watched by `mkdocs` when
   serving the documentation, for auto-reload.
 - **Sane defaults:** you should be able to just drop the plugin in your configuration and enjoy your auto-generated docs.
-  
+
 ### Python handler features
 
 - **Data collection from source code**: collection of the object-tree and the docstrings is done by
   [`pytkdocs`](https://github.com/pawamoy/pytkdocs). The following features are possible thanks to it:
     - **Support for type annotations:** `pytkdocs` collects your type annotations and `mkdocstrings` uses them
-      to display parameters types or return types. 
+      to display parameters types or return types.
     - **Recursive documentation of Python objects:** just use the module dotted-path as identifier, and you get the full
       module docs. You don't need to inject documentation for each class, function, etc.
     - **Support for documented attribute:** attributes (variables) followed by a docstring (triple-quoted string) will
@@ -65,7 +65,7 @@ Automatic documentation from sources, for MkDocs.
   `[this object][package.module.object]` or directly with `[package.module.object][]`
 - **Source code display:** `mkdocstrings` can add a collapsible div containing the highlighted source code
   of the Python object.
-  
+
 To get an example of what is possible, check `mkdocstrings`'
 own [documentation](https://pawamoy.github.io/mkdocstrings), auto-generated from sources by itself of course,
 and the following GIF:
@@ -73,12 +73,14 @@ and the following GIF:
 ![mkdocstrings_gif2](https://user-images.githubusercontent.com/3999221/77157838-7184db80-6aa2-11ea-9f9a-fe77405202de.gif)
 
 ## Roadmap
-- [x] **January-March 2020:** Big refactor.
-- [ ] **March-April 2020:** Write. Tests. Because. It's important.
-  Gather feedback about Python handler configuration options.
-  Work the backlog.
+
+- [x] **December-January 2020:** Proof of Concept.
+- [x] **January-March 2020:** Refactor.
+- [x] **March-April 2020:** Test suite for [`pytkdocs`](https://github.com/pawamoy/pytkdocs). Bug fixes, enhancements.
+- [ ] **May-June 2020:** Test suite for `mkdocstrings` itself. **Better documentation.** Maybe a second handler, just for the fun.
 
 ## Requirements
+
 `mkdocstrings` requires Python 3.6 or above.
 
 <details>
@@ -101,14 +103,14 @@ pyenv global system 3.6.8
 ```
 </details>
 
-!!! note
-    This project currently only works with the Material theme of MkDocs. Therefore, it is required that you have it installed.
-    
-    ```
-    pip install mkdocs-material
-    ```
+This project currently only works with the Material theme of MkDocs. Therefore, it is required that you have it installed.
+
+```
+pip install mkdocs-material
+```
 
 ## Installation
+
 With `pip`:
 ```bash
 python3.6 -m pip install mkdocstrings

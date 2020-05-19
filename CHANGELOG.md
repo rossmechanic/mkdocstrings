@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+<!-- insertion marker -->
+## [v0.11.1](https://github.com/pawamoy/mkdocstrings/releases/tag/v0.11.1) - 2020-05-14
+
+<small>[Compare with v0.11.0](https://github.com/pawamoy/mkdocstrings/compare/v0.11.0...v0.11.1)</small>
+
+### Bug Fixes
+- Fix integration with mkdocs logging *une bonne fois pour toute* ([3293cbf](https://github.com/pawamoy/mkdocstrings/commit/3293cbf161f05d36de6c1d50b5de9742bf99066e) by Timothée Mazzucotelli).
+- Discard setup commands stdout ([ea44cea](https://github.com/pawamoy/mkdocstrings/commit/ea44cea33159ed3a6b0b34b4cd52a17a40bd6460) by Timothée Mazzucotelli). References: [#91](https://github.com/pawamoy/mkdocstrings/issues/91)
+- Use the proper python executable to start subprocesses ([9fe3b39](https://github.com/pawamoy/mkdocstrings/commit/9fe3b3915bd8f15011f8f3632a227d1eb56603fd) by Reece Dunham). References: [#91](https://github.com/pawamoy/mkdocstrings/issues/91), [#103](https://github.com/pawamoy/mkdocstrings/issues/103)
+
+
+## [v0.11.0](https://github.com/pawamoy/mkdocstrings/releases/tag/v0.11.0) - 2020-04-23
+
+<small>[Compare with v0.10.3](https://github.com/pawamoy/mkdocstrings/compare/v0.10.3...v0.11.0)</small>
+
+### Bug Fixes
+- Properly raise on errors (respect strict mode) ([2097208](https://github.com/pawamoy/mkdocstrings/commit/20972082a94b64bec02c77d6a80384d8042f60ea) by Timothée Mazzucotelli). Related issues/PRs: [#86](https://github.com/pawamoy/mkdocstrings/issues/86)
+- Hook properly to MkDocs logging ([b23daed](https://github.com/pawamoy/mkdocstrings/commit/b23daed3743bbd2d3f024df34582a317c51a1af0) by Timothée Mazzucotelli). Related issues/PRs: [#86](https://github.com/pawamoy/mkdocstrings/issues/86)
+
+### Features
+- Add `setup_commands` option to python handler ([599f8e5](https://github.com/pawamoy/mkdocstrings/commit/599f8e528f55093b0011b732da959b747c1e02c0) by Ross Mechanic). Related issues/PRs: [#89](https://github.com/pawamoy/mkdocstrings/issues/89), [#90](https://github.com/pawamoy/mkdocstrings/issues/90)
+- Add option to allow overriding templates ([7360021](https://github.com/pawamoy/mkdocstrings/commit/7360021ab4753706d0f6209ed960050f5d424ad8) by Mikaël Capelle). Related issues/PRs: [#59](https://github.com/pawamoy/mkdocstrings/issues/59), [#82](https://github.com/pawamoy/mkdocstrings/issues/82)
+
+
 ## [v0.10.3](https://github.com/pawamoy/mkdocstrings/releases/tag/v0.10.3) - 2020-04-10
 
 <small>[Compare with v0.10.2](https://github.com/pawamoy/mkdocstrings/compare/v0.10.2...v0.10.3)</small>
@@ -204,5 +228,4 @@ No identified breaking changes for end-users.
 - First PoC, needs better theming ([18a00b9](https://github.com/pawamoy/mkdocstrings/commit/18a00b9405a94405256a1ad2ae45886da40296e4)).
 - Get attributes docstrings ([7838fff](https://github.com/pawamoy/mkdocstrings/commit/7838fffa5b1d5a481fd2ea5a94d305a96b06c321)).
 - Refactor ([f68f1a8](https://github.com/pawamoy/mkdocstrings/commit/f68f1a89d477a55a6e86a9eb4c92bd5d6416b5cc)).
-
 
